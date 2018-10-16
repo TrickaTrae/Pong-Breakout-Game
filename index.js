@@ -23,24 +23,24 @@ let leftPressed = false;
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-function keyDownHandler(e){
-    if(e.keyCode == 39){
+function keyDownHandler(e) {
+    if (e.keyCode == 39) {
         rightPressed = true;
-    }else if(e.keyCode == 37){
+    } else if (e.keyCode == 37) {
         leftPressed = true;
     }
 }
-function keyUpHandler(e){
-    if(e.keyCode == 39){
+function keyUpHandler(e) {
+    if (e.keyCode == 39) {
         rightPressed = false;
-    }else if(e.keyCode == 37){
+    } else if (e.keyCode == 37) {
         leftPressed = false;
     }
 }
 
 
 //function that draws my ball
-const drawBall = () => {
+function drawBall() {
     context.beginPath();
     context.arc(x, y, ballRadius, 0, Math.PI * 2);
     context.fillStyle = "blue";
@@ -49,16 +49,16 @@ const drawBall = () => {
 }
 
 //function that draws my paddle
-const drawPaddle = () => {
+function drawPaddle() {
     context.beginPath();
-    context.rect(paddleX, canvas.height-paddleHeight - 15, paddleWidth, paddleHeight);
+    context.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
     context.fillStyle = "blue";
     context.fill();
     context.closePath();
 }
 
 
-const draw = () => {
+function draw() {
     context.clearRect(0, 0, canvas.width, canvas.height); //clears the canvas
     drawBall();
     drawPaddle();
@@ -67,15 +67,23 @@ const draw = () => {
     if (x + moveX > canvas.width - ballRadius || x + moveX < ballRadius) { //checking if ball hits right and left wall, reverse direction
         moveX = -moveX;
     }
-    if (y + moveY > canvas.height - ballRadius || y + moveY < ballRadius) { //checking if ball hits top and bottom wall, reverse direction
+
+    if (y + moveY < ballRadius) { //checking if ball hits top
         moveY = -moveY;
+    } else if (y + moveY == canvas.height - ballRadius) { //checking if the ball hits the bottom of the canvas
+        if (x > paddleX && x < paddleX + paddleWidth) { //checking if the ball hits the paddle
+            moveY = -moveY;
+        } else {
+            alert("GAME OVER")
+            document.location.reload();
+        }
     }
 
-    if(rightPressed && paddleX <= canvas.width-paddleWidth){
-        paddleX += 10;
+    if (rightPressed && paddleX <= canvas.width - paddleWidth) {
+        paddleX += 9;
     }
-    if(leftPressed && paddleX >= 0){
-        paddleX -= 10;
+    if (leftPressed && paddleX >= 0) {
+        paddleX -= 9;
     }
 
     x += moveX;
@@ -83,3 +91,5 @@ const draw = () => {
 
 }
 setInterval(draw, 8);
+
+// x > paddleX && x < paddleX + paddleWidth

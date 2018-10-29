@@ -19,6 +19,9 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 let rightPressed = false;
 let leftPressed = false;
 
+// score
+let score = 0;
+
 // bricks
 const brickRowCount = 4;
 const brickColumnCount = 8;
@@ -112,10 +115,22 @@ function collisionDetection() {
         ) {
           moveY = -moveY;
           b.status = 0;
+          score++;
+          if (score === brickRowCount * brickColumnCount) {
+            alert("YOU WIN, CONGRATULATIONS!");
+            document.location.reload();
+          }
         }
       }
     }
   }
+}
+
+// drawing score on the screen
+function drawScore() {
+  context.font = "18px Arial";
+  context.fillStyle = "blue";
+  context.fillText("Score: " + score, 10, 23);
 }
 
 function draw() {
@@ -123,6 +138,7 @@ function draw() {
   drawBricks();
   drawBall();
   drawPaddle();
+  drawScore();
   collisionDetection();
 
   if (x + moveX > canvas.width - ballRadius || x + moveX < ballRadius) {

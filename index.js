@@ -4,11 +4,13 @@ const context = canvas.getContext("2d");
 // initializing a starting point for my ball
 let x = canvas.width / 2;
 let y = canvas.height - 60;
+
+// ball radius
+const ballRadius = 10;
+
 // making the ball move
 let moveX = 2;
 let moveY = -2;
-
-const ballRadius = 10;
 
 // initializing the paddle
 const paddleHeight = 15;
@@ -32,16 +34,18 @@ const brickOffsetTop = 40;
 const brickOffsetLeft = 29;
 
 let bricks = [];
+// loops through the rows and columns to create new bricks
 for (let c = 0; c < brickColumnCount; c++) {
-  // loops through the rows and columns to create new bricks
   bricks[c] = [];
   for (let r = 0; r < brickRowCount; r++) {
     bricks[c][r] = { x: 0, y: 0, status: 1 };
   }
 }
 
+// movement/controls
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 function keyDownHandler(e) {
   if (e.keyCode == 39) {
@@ -55,6 +59,12 @@ function keyUpHandler(e) {
     rightPressed = false;
   } else if (e.keyCode == 37) {
     leftPressed = false;
+  }
+}
+function mouseMoveHandler(e) {
+  let relativeX = e.clientX - canvas.offsetLeft;
+  if (relativeX > 0 && relativeX < canvas.width) {
+    paddleX = relativeX - paddleWidth / 2;
   }
 }
 
@@ -141,18 +151,18 @@ function draw() {
   drawScore();
   collisionDetection();
 
+  // checking if ball hits right and left wall, reverse direction
   if (x + moveX > canvas.width - ballRadius || x + moveX < ballRadius) {
-    // checking if ball hits right and left wall, reverse direction
     moveX = -moveX;
   }
 
+  // checking if ball hits top
   if (y + moveY < ballRadius) {
-    // checking if ball hits top
     moveY = -moveY;
-  } else if (y + moveY == canvas.height - ballRadius) {
     // checking if the ball hits the bottom of the canvas
+  } else if (y + moveY == canvas.height - ballRadius) {
+    // checking if the ball hits the paddle
     if (x > paddleX && x < paddleX + paddleWidth) {
-      // checking if the ball hits the paddle
       moveY = -moveY;
     } else {
       alert("GAME OVER");

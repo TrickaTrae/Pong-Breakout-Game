@@ -9,8 +9,8 @@ let y = canvas.height - 60;
 const ballRadius = 10;
 
 // making the ball move
-let moveX = 2;
-let moveY = -2;
+let moveX = 6;
+let moveY = -6;
 
 // initializing the paddle
 const paddleHeight = 15;
@@ -23,6 +23,9 @@ let leftPressed = false;
 
 // score
 let score = 0;
+
+// lives
+let lives = 3;
 
 // bricks
 const brickRowCount = 4;
@@ -72,7 +75,7 @@ function mouseMoveHandler(e) {
 function drawBall() {
   context.beginPath();
   context.arc(x, y, ballRadius, 0, Math.PI * 2);
-  context.fillStyle = "blue";
+  context.fillStyle = "red";
   context.fill();
   context.closePath();
 }
@@ -143,12 +146,20 @@ function drawScore() {
   context.fillText("Score: " + score, 10, 23);
 }
 
+// drawing lives on the screen
+function drawLives() {
+  context.font = "18px Arial";
+  context.fillStyle = "blue";
+  context.fillText("Lives: " + lives, canvas.width - 70, 23);
+}
+
 function draw() {
   context.clearRect(0, 0, canvas.width, canvas.height); // clears the canvas
   drawBricks();
   drawBall();
   drawPaddle();
   drawScore();
+  drawLives();
   collisionDetection();
 
   // checking if ball hits right and left wall, reverse direction
@@ -160,24 +171,35 @@ function draw() {
   if (y + moveY < ballRadius) {
     moveY = -moveY;
     // checking if the ball hits the bottom of the canvas
-  } else if (y + moveY == canvas.height - ballRadius) {
+  } else if (y + moveY + 2 == canvas.height - ballRadius) {
     // checking if the ball hits the paddle
     if (x > paddleX && x < paddleX + paddleWidth) {
       moveY = -moveY;
     } else {
-      alert("GAME OVER");
-      document.location.reload();
+      // subtracting lives and checking if player has no lives left
+      lives--;
+      if (!lives) {
+        alert("GAME OVER");
+        document.location.reload();
+      } else {
+        x = canvas.width / 2;
+        y = canvas.height - 30;
+        moveX = 6;
+        moveY = -6;
+        paddleX = (canvas.width - paddleWidth) / 2;
+      }
     }
   }
 
   if (rightPressed && paddleX <= canvas.width - paddleWidth) {
-    paddleX += 8;
+    paddleX += 6;
   }
   if (leftPressed && paddleX >= 0) {
-    paddleX -= 8;
+    paddleX -= 6;
   }
 
   x += moveX;
   y += moveY; //making the ball move
+  requestAnimationFrame(draw);
 }
-setInterval(draw, 8);
+draw();
